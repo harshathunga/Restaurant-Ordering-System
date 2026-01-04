@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
+
+import login from "./routes/login.js"
 import express from "express";
 // import jobdata from "./routes/jobdata.js";
 import cors from "cors";
@@ -22,3 +24,5 @@ app.use(
 app.listen(process.env.port, () => {
   console.log("server is running in", process.env.port );
 });
+
+app.use("/restro", login)

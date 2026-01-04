@@ -1,0 +1,89 @@
+import db from "./db.js";
+
+import bcrypt from "bcrypt";
+import mysql2 from "mysql2/promise";
+
+import express from "express";
+import cors from "cors";
+const router = express.Router();
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+router.post("/register", async (req, res) => {
+  const { email, password, full_name, phone } = req.body;
+
+  console.log(email, password, full_name, phone);
+
+  if (!email || !password || !full_name || !phone) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  db.query("select * from users where email = ?", [email], (err, rlt) => {
+    if (err) {
+      console.log(err);
+    }
+    if (rlt.length > 0) {
+      console.log("User already exists");
+      res.json({ msg: "User already exists" });
+    }
+  });
+
+  bcrypt.hash(password, 10, (err, hash) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(hash);
+      db.query(
+        "INSERT INTO users (email, password, full_name, phone) VALUES (?, ?, ?, ?)",
+        [email, hash, full_name, phone],
+        (err, rlt) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.json({ msg: "Account has been created " });
+          }
+        }
+      );
+    }
+  });
+});
+
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  console.log(email, password);
+
+  db.query("select *  from users where email = ?", [email], (err, rlt) => {
+    if (err) {
+      console.log(err);
+    }
+
+    if (rlt.length === 0) {
+      res.json("no user found please register");
+    } else {
+      console.log(rlt[0].password);
+
+      // res.json({rlt: rlt[0].password})
+
+      bcrypt.compare(password, rlt[0].password, (err, results) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ message: "Error checking password" });
+        }
+
+        if (results) {
+          res.json({
+            message: "Login successful",
+            details: { role: rlt[0].role, email: rlt[0].email, full_name: rlt[0].full_name },
+          });
+        } else {
+          res.json({ message: "login failed" });
+        }
+      });
+    }
+  });
+});
+
+export default router;
