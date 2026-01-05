@@ -1,8 +1,8 @@
 import db from "./db.js";
 
 import bcrypt from "bcrypt";
-import mysql2 from "mysql2/promise";
 
+import jwt from "jsonwebtoken";
 import express from "express";
 import cors from "cors";
 const router = express.Router();
@@ -11,6 +11,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+app.use(cors({
+  origin: "http://localhost:5173", // your frontend URL
+  credentials: true, // allow cookies to be sent
+}));
+app.use(cookieParser());
 
 router.post("/register", async (req, res) => {
   const { email, password, full_name, phone } = req.body;
@@ -51,6 +57,9 @@ router.post("/register", async (req, res) => {
   });
 });
 
+
+router.get("/test", )
+
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
   console.log(email, password);
@@ -74,8 +83,19 @@ router.post("/login", (req, res) => {
         }
 
         if (results) {
+
+            const token = jwt.sign(
+          {
+            id: rlt[0].id,
+            email: rlt[0].email,
+            role: rlt[0].role
+          },
+          process.env.secret_key,
+          { expiresIn: "1h" }
+        );
           res.json({
             message: "Login successful",
+            token: token,
             details: { role: rlt[0].role, email: rlt[0].email, full_name: rlt[0].full_name },
           });
         } else {
