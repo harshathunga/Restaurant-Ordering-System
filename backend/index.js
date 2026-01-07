@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import login from "./routes/login.js"
+import cookieParser from "cookie-parser";
+import menu from "./routes/menu.js"
 import express from "express";
 // import jobdata from "./routes/jobdata.js";
 import cors from "cors";
@@ -33,3 +35,4 @@ app.listen(process.env.port, () => {
 });
 
 app.use("/restro", login)
+app.use("/menu", menu)

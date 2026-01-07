@@ -1,7 +1,7 @@
 import db from "./db.js";
 
 import bcrypt from "bcrypt";
-
+import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import express from "express";
 import cors from "cors";
@@ -12,11 +12,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use(cors({
-  origin: "http://localhost:5173", // your frontend URL
-  credentials: true, // allow cookies to be sent
-}));
-app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // your frontend URL
+    credentials: true, // allow cookies to be sent
+  })
+);
+// app.use(cookieParser());
 
 router.post("/register", async (req, res) => {
   const { email, password, full_name, phone } = req.body;
@@ -58,7 +60,6 @@ router.post("/register", async (req, res) => {
 });
 
 
-router.get("/test", )
 
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -83,20 +84,31 @@ router.post("/login", (req, res) => {
         }
 
         if (results) {
+          const token = jwt.sign(
+            {
+              id: rlt[0].id,
+              email: rlt[0].email,
+              role: rlt[0].role,
+            },
+            process.env.secret_key,
+            { expiresIn: "1h" }
+          );
 
-            const token = jwt.sign(
-          {
-            id: rlt[0].id,
-            email: rlt[0].email,
-            role: rlt[0].role
-          },
-          process.env.secret_key,
-          { expiresIn: "1h" }
-        );
+          res.cookie("token", token, {
+            httpOnly: true, // cannot be accessed by JS
+            secure: false, // set true if using HTTPS
+            sameSite: "lax",
+            maxAge: 3600000, // 1 hour
+          });
+
           res.json({
             message: "Login successful",
-            token: token,
-            details: { role: rlt[0].role, email: rlt[0].email, full_name: rlt[0].full_name },
+            // token: token,
+            details: {
+              role: rlt[0].role,
+              email: rlt[0].email,
+              full_name: rlt[0].full_name,
+            },
           });
         } else {
           res.json({ message: "login failed" });
