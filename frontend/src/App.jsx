@@ -1,11 +1,14 @@
 import './App.css'
-import Login from './Login'
+import Login from './Login';
+import "./index.css";
 function App() {
  
 
   return (
-    <div className='bg-red-500'>
+    <div className='bg-blue-100'>
       <Login/>
+
+      hhhhh
     </div>
   )
 }

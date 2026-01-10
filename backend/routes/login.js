@@ -11,14 +11,23 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["POST", "GET", "DELETE", 'PUT'],
+
+    credentials: true,
+  })
+); 
 
 app.use(
   cors({
     origin: "http://localhost:5173", // your frontend URL
+     methods: ["POST", "GET", "DELETE", "PUT"],
     credentials: true, // allow cookies to be sent
   })
 );
-// app.use(cookieParser());
+app.use(cookieParser());
 
 router.post("/register", async (req, res) => {
   const { email, password, full_name, phone } = req.body;
@@ -65,6 +74,10 @@ router.post("/login", (req, res) => {
   const { email, password } = req.body;
   console.log(email, password);
 
+  if(!email ||!password){
+    res.json({message: "fill all the fields" })
+  }
+ 
   db.query("select *  from users where email = ?", [email], (err, rlt) => {
     if (err) {
       console.log(err);
@@ -95,9 +108,9 @@ router.post("/login", (req, res) => {
           );
 
           res.cookie("token", token, {
-            httpOnly: true, // cannot be accessed by JS
+            httpOnly: false, // cannot be accessed by JS
             secure: false, // set true if using HTTPS
-            sameSite: "lax",
+            sameSite: "none",
             maxAge: 3600000, // 1 hour
           });
 

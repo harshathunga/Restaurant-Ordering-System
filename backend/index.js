@@ -19,13 +19,13 @@ app.use(cors({
 
 app.use(cookieParser());
 
-app.use(
+app.use( 
   cors({
     origin: "http://localhost:5173",
     methods: ["POST", "GET", "DELETE", 'PUT'],
 
     credentials: true,
-  })
+  }) 
 ); 
 
 // app.use("/jobs", jobdata);
