@@ -7,27 +7,28 @@ import express from "express";
 import cors from "cors";
 const router = express.Router();
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["POST", "GET", "DELETE", 'PUT'],
+// const app = express();
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(cors());
+// app.use(cookieParser());
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: ["POST", "GET", "DELETE", 'PUT'],
 
-    credentials: true,
-  })
-); 
+//     credentials: true,
+//   })
+// ); 
 
-app.use(
-  cors({
-    origin: "http://localhost:5173", // your frontend URL
-     methods: ["POST", "GET", "DELETE", "PUT"],
-    credentials: true, // allow cookies to be sent
-  })
-);
-app.use(cookieParser());
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // your frontend URL
+//      methods: ["POST", "GET", "DELETE", "PUT"],
+//     credentials: true, // allow cookies to be sent
+//   })
+// );
+
 
 router.post("/register", async (req, res) => {
   const { email, password, full_name, phone } = req.body;
@@ -75,7 +76,8 @@ router.post("/login", (req, res) => {
   console.log(email, password);
 
   if(!email ||!password){
-    res.json({message: "fill all the fields" })
+    return res.json({message: "fill all the fields" })
+    
   }
  
   db.query("select *  from users where email = ?", [email], (err, rlt) => {
@@ -97,6 +99,7 @@ router.post("/login", (req, res) => {
         }
 
         if (results) {
+
           const token = jwt.sign(
             {
               id: rlt[0].id,
@@ -107,12 +110,19 @@ router.post("/login", (req, res) => {
             { expiresIn: "1h" }
           );
 
-          res.cookie("token", token, {
-            httpOnly: false, // cannot be accessed by JS
-            secure: false, // set true if using HTTPS
-            sameSite: "none",
-            maxAge: 3600000, // 1 hour
-          });
+           res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+          // res.cookie("token", token, {
+          //   httpOnly: true, // cannot be accessed by JS
+          //   secure: false, // set true if using HTTPS
+          //   sameSite: "none",
+          //   maxAge: 60 * 60 * 1000, // 1 hour
+          // });
 
           res.json({
             message: "Login successful",

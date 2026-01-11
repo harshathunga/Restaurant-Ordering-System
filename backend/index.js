@@ -1,38 +1,32 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import login from "./routes/login.js"
-import cookieParser from "cookie-parser";
-import menu from "./routes/menu.js"
 import express from "express";
-// import jobdata from "./routes/jobdata.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+
+import login from "./routes/login.js";
+import menu from "./routes/menu.js";
+
 const app = express();
-const router = express.Router();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(cors({
-  origin: "http://localhost:5173", // your frontend URL
-  credentials: true, // allow cookies to be sent
-}));
-
 app.use(cookieParser());
 
-app.use( 
+// ✅ CORS ONLY HERE
+app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: ["POST", "GET", "DELETE", 'PUT'],
-
     credentials: true,
-  }) 
-); 
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
-// app.use("/jobs", jobdata);
+// ✅ Routes
+app.use("/restro", login);
+app.use("/menu", menu);
 
 app.listen(process.env.port, () => {
-  console.log("server is running in", process.env.port );
+  console.log("Server running on", process.env.port);
 });
-
-app.use("/restro", login)
-app.use("/menu", menu)

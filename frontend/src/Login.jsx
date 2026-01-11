@@ -56,7 +56,7 @@ function Login() {
   return (
     <div>
       {alert.show ? (
-        <div className="fixed top-3">
+        <div className="fixed top-3 w-[100%] h-8 bg-zinc-200 size-7">
           <div className="flex">
             <span>{alert.message}</span>
 
