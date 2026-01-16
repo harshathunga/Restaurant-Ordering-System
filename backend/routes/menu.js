@@ -41,8 +41,21 @@ router.post("/catogories", verifyToken, (req, res) =>{
     })
 })
 
+router.get("/category", (req, res)=> {
+    db.query("select * from categories where is_active = 1 order by display_order asc ",(err, rlt) => {
+        if(err){
+            res.json({message: "error feching catogories"})
+        }
+
+        else{
+            res.json({data: rlt})
+        }
+    } )
+})
+
+
 router.get("/categories", (req, res)=> {
-    db.query("select id,name, is_active from categories order by display_order asc",(err, rlt) => {
+    db.query("select * from categories where is_active = 1 order by display_order asc ",(err, rlt) => {
         if(err){
             res.json({message: "error feching catogories"})
         }
@@ -65,6 +78,17 @@ router.get("/categories/:id",(req, res)=>{
         }
         else{
             res.json({data: rlt})
+        }
+    })
+})
+
+
+router.get("/menuitems", (req, res)=>{
+    db.query("select * from menu_items where is_available = 1", (err, rlt)=>{
+        if(err){
+            return res.json({err})
+        }else{
+            res.json({rlt})
         }
     })
 })

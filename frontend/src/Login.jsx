@@ -27,11 +27,20 @@ function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(login),
-      }); 
+      });
 
       const data = await res.json();
 
-      console.log(data,"this is data of the data")
+      console.log(data, "this is data of login");
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          user: data.details.full_name,
+          email: data.details.email,
+          role: data.details.role,
+        })
+      );
+
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
@@ -69,7 +78,9 @@ function Login() {
             </button>
           </div>
         </div>
-      ): ""} 
+      ) : (
+        ""
+      )}
 
       <div className=" flex flex-col h-auto bg-slate-400 w-[350px] p-6 rounded-xl shadow-lg mx-auto mt-20">
         <label className="my-2 mx-auto align-middle justify-center text-white">
