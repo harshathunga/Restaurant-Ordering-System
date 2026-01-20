@@ -3,6 +3,7 @@ import Listing from './Listing';
 
 import Login from './Login';
 import Menu from './Menu';
+import { AuthProvider } from './contex';
 import "./index.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 function App() {
@@ -11,9 +12,11 @@ function App() {
   return (
     <div className='bg-blue-100'>
       {/* <Login/> */}
+
+      <AuthProvider>
       <Menu/>
 
-      <Listing></Listing>
+      {/* <Listing></Listing> */}
       
 
       <Router>
@@ -22,6 +25,8 @@ function App() {
           <Route path = '/listing' element= {<Listing></Listing>}></Route>
         </Routes>
       </Router>
+
+      </AuthProvider>
     </div>
   )
 }

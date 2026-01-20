@@ -27,17 +27,25 @@ app.use(
 
 router.post("/catogories", verifyToken, (req, res) =>{
 
-    const {id,name,display_order} = req.body
+    const {id,name,display_order,is_active} = req.body
+    
 
-//     id SERIAL PRIMARY KEY,
-//   name VARCHAR(100) NOT NULL,
-//   description TEXT,
-//   display_order INT DEFAULT 0,
-//   is_active BOOLEAN DEFAULT true,
-    db.query("insert into categories ( id , name,  display_order) values (?,?,?)", (err,rlt)=>{
-        if(!id || !name || !display_order){
-            res.json({message: "all fields are required"})
+    // const isActive = is_active === "true" ? 1 : 0;
+    // console.log(is_active, isActive);
+
+    console.log(is_active, id,name,display_order )
+
+    if(!id || !name || !display_order){
+           return res.json({message: "all fields are required"})
         }
+    db.query("insert into categories ( id , name, is_active, display_order) values (?,?,?,?)",[id,name, is_active, display_order ], (err,rlt)=>{
+        if (err) {
+            return res.json({error: err})
+        }
+        else{
+            return res.json({msg: "data posted succesfully"})
+        }
+        
     })
 })
 

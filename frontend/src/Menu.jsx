@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext,useEffect, useState } from "react";
 import "./index.css";
 import "./App.css";
-import { Link } from "react-router-dom";
 
+import { AuthContext } from './contex';
 
 
 function Menu() {
+
+  const{context_categories,setcontext_categories} = useContext(AuthContext);
   const [categories, setcategories] = useState([]);
 
   const [activ, setactiv] = useState("all");
@@ -68,8 +70,12 @@ function Menu() {
   useEffect(() => {
     fetchCategories();
     menuitems();
+   
+  }, [context_categories]);
+
+  useEffect(()=>{
     filter()
-  }, [catid]);
+  },[catid])
 
   return (
     <div>
