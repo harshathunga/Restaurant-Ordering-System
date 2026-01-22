@@ -9,6 +9,8 @@ import express from "express";
 import cors from "cors";
 
 import { verifyToken } from "../middleware/verifyToken.js";
+
+import { verifyAdmin } from "../middleware/verifyToken.js";
 const router = express.Router();
 
 const app = express();
@@ -24,8 +26,8 @@ app.use(
 );
 // app.use(cookieParser());
 
-
-router.post("/catogories", verifyToken, (req, res) =>{
+// this will post the category by verifying the token and admin status
+router.post("/catogories", verifyToken,verifyAdmin,(req, res) =>{
 
     const {id,name,display_order,is_active} = req.body
     
@@ -33,7 +35,7 @@ router.post("/catogories", verifyToken, (req, res) =>{
     // const isActive = is_active === "true" ? 1 : 0;
     // console.log(is_active, isActive);
 
-    console.log(is_active, id,name,display_order )
+    console.log(is_active, id,name,display_order,"this is posting data of cat" )
 
     if(!id || !name || !display_order){
            return res.json({message: "all fields are required"})
@@ -49,6 +51,41 @@ router.post("/catogories", verifyToken, (req, res) =>{
     })
 })
 
+router.put('/catogories/:id',verifyToken,verifyAdmin, (req,res)=> {
+    const id = req.params.id
+
+    const {name,display_order,is_active} = req.body
+
+})
+
+router.get("/catogories/:id",(req,res)=>{
+    const id = req.params.id
+    db.query("select * from categories where id = ?", [id], (err, rlt)=> {
+        if(err){
+            return res.json({"msg":err})
+        }else{
+            return res.json({rlt: rlt})
+        }
+    })
+})
+
+// this will delete the category by verifying the token and admin status
+router.delete("/catogories/:id", verifyToken,verifyAdmin, (req,res)=> {
+
+    const id = req.params.id
+
+    console.log(id)
+    db.query("delete from categories where id = ?",[id],(err, rlt)=>{
+        if(err){
+            return res.json({msg: err})
+        }
+        else{
+            return res.json({msg: "data has been deleted"})
+        }
+    } )
+} )
+
+// this will fetch categories based on active or not
 router.get("/category", (req, res)=> {
     db.query("select * from categories where is_active = 1 order by display_order asc ",(err, rlt) => {
         if(err){
@@ -61,7 +98,7 @@ router.get("/category", (req, res)=> {
     } )
 })
 
-
+// this will fetch categories based on active or not
 router.get("/categories", (req, res)=> {
     db.query("select * from categories where is_active = 1 order by display_order asc ",(err, rlt) => {
         if(err){
@@ -74,7 +111,7 @@ router.get("/categories", (req, res)=> {
     } )
 })
 
-
+// this is to fetch menu based on the categories id
 router.get("/categories/:id",(req, res)=>{
     const id = req.params.id
     // console.log(id)
@@ -90,7 +127,7 @@ router.get("/categories/:id",(req, res)=>{
     })
 })
 
-
+//  this is to fetchmenu items bassed on the avalibility
 router.get("/menuitems", (req, res)=>{
     db.query("select * from menu_items where is_available = 1", (err, rlt)=>{
         if(err){

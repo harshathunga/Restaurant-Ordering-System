@@ -1,6 +1,6 @@
 import './App.css'
 import Listing from './Listing';
-
+import AdminRoute from './AdminRoute';
 import Login from './Login';
 import Menu from './Menu';
 import { AuthProvider } from './contex';
@@ -22,7 +22,12 @@ function App() {
       <Router>
         <Routes>
           <Route path = '/login' element= {<Login></Login>}></Route>
-          <Route path = '/listing' element= {<Listing></Listing>}></Route>
+          <Route path = '/listing' element= 
+
+          <AdminRoute>
+          <Listing></Listing>
+          </AdminRoute>
+          ></Route>
         </Routes>
       </Router>
 
