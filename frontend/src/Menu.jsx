@@ -1,13 +1,11 @@
-import React, { useContext,useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./index.css";
 import "./App.css";
 
-import { AuthContext } from './contex';
-
+import { AuthContext } from "./contex";
 
 function Menu() {
-
-  const{context_categories,setcontext_categories} = useContext(AuthContext);
+  const { context_categories, setcontext_categories } = useContext(AuthContext);
   const [categories, setcategories] = useState([]);
 
   const [activ, setactiv] = useState("all");
@@ -16,7 +14,7 @@ function Menu() {
   const [menu, setmenu] = useState([]);
   const [filterdata, setfilterdata] = useState([]);
 
-  const [catid, setcatid] = useState("");
+  const [catid, setcatid] = useState(null);
 
   console.log(filterdata, "this is filterdata");
 
@@ -47,7 +45,7 @@ function Menu() {
     const filldata =
       catid === null ? menu : menu.filter((i) => i.category_id === catid);
 
-      setfilterdata(filldata)
+    setfilterdata(filldata);
   };
 
   const fetchCategories = async () => {
@@ -67,15 +65,16 @@ function Menu() {
     }
   };
 
+  
+
   useEffect(() => {
     fetchCategories();
     menuitems();
-   
   }, [context_categories]);
 
-  useEffect(()=>{
-    filter()
-  },[catid])
+  useEffect(() => {
+    filter();
+  }, [catid,menu]);
 
   return (
     <div>
@@ -84,6 +83,7 @@ function Menu() {
           <h1 className="text-xl font-medium ">company name</h1>
 
           <div className="flex justify-between gap-4">
+            <span>cart</span>
             <span>login</span>
             <div className="">
               <button
@@ -98,7 +98,9 @@ function Menu() {
                   {/* <>JDJDJD</> */}
                   {role === "ADMIN" && (
                     <>
-                     <button><a href='/listing'>Manage Categories</a></button> 
+                      <button>
+                        <a href="/listing">Manage Categories</a>
+                      </button>
                       <li>Manage menu items</li>
                     </>
                   )}
@@ -157,6 +159,47 @@ function Menu() {
         <div className="flex"></div>
 
         <input className="outline-none p-2 rounded-xl my-5 "></input>
+
+        <div className="px-4 py-6 ">
+          <div
+            className="grid 
+      grid-cols-1 
+      sm:grid-cols-2 
+      md:grid-cols-2 
+      lg:grid-cols-3 
+      gap-6 "
+          >
+            { filterdata.map((e)=> (
+              <div className="bg-white shadow rounded-lg overflow-hidden">
+              <div className="h-32 bg-gradient-to-b from-orange-100 to-orange-50 flex items-center justify-center text-6xl">
+                <img
+                  className="h-32 w-auto"
+                  src={e.image_url}
+                ></img>
+              </div>
+
+              <div className="p-4">
+                <h2 className="font-bold text-lg">{e.name}</h2>
+                <p className="text-gray-600 text-sm">
+                  {e.description}
+                  
+                </p>
+
+                <div className="flex justify-between items-center mt-4">
+                  <span className="font-bold text-orange-600">${e.price}</span>
+                  <button onClick={()=> test(e)} className="bg-orange-500 text-white px-4 py-1 rounded-lg">
+                    + Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            ))
+
+            
+}
+            {/* COPY THIS CARD FOR MORE ITEMS */}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ function Listing() {
   const { context_categories, setcontext_categories } = useContext(AuthContext);
 
   const [open, setopen] = useState(false);
-  const [eid, seteid] = useState("");
+  const [eid, seteid] = useState(null);
   const [editcategories, seteditcategories] = useState(false);
 
   const [categories, setcategories] = useState({
@@ -43,11 +43,12 @@ function Listing() {
 
   const setedit = async (id) => {
     seteid(id);
-    console.log("-", eid, "==", id);
-    const res = await fetch(`http://localhost:3002/menu/catogories/${eid}`);
+
+    const res = await fetch(`http://localhost:3002/menu/catogories/${id}`);
 
     const data = await res.json();
     const job = data.rlt[0];
+    console.log(job, "this is job")
 
     setcategories({
       id: job.id,
@@ -56,9 +57,32 @@ function Listing() {
       display_order: job.display_order,
       is_active: true,
     });
-
-    console.log("e-i-d", eid, categories, "this is set edit caterories");
   };
+
+
+  const postedit = async () => {
+    // alert(eid)
+       try {
+      const res = await fetch(`http://localhost:3002/menu/catogories/${eid}`, {
+        method: "put",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(categories),
+      });
+      const data = await res.json();
+        console.log(data);
+      fetchCategories();
+      navigate("/listing")
+    } catch (error) {
+      console.error("Failed to update categories:", error);
+    }
+
+    
+
+
+  }
 
   const handledelete = async (id) => {
     // console.log(id)
@@ -176,6 +200,7 @@ function Listing() {
                   onClick={() => {
                     seteditcategories(!editcategories);
                     setedit(e.id);
+                    
                   }}
                   className="p-2 m-2 bg-blue-400 rounded-md hover:-translate-y-2 transition-transform duration-300"
                 >
@@ -195,63 +220,74 @@ function Listing() {
           </div>
         ))}
 
-        {editcategories && (
-        //   <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 ">
-        //     <div className="flex mx-auto w-[50%] flex-col align-middle ">
-        //       {/* <button onClick={()=> navigate("/listing")}>back</button> */}
 
-        //       <label>id</label>
-        //       <input
-        //         value={categories.id}
-        //         onChange={(e) =>
-        //           setcategories({ ...categories, id: e.target.value })
-        //         }
-        //         type="number"
-        //         placeholder="enter unique number"
-        //       ></input>
 
-        //       <lable>category name</lable>
-        //       <input
-        //         value={categories.name}
-        //         onChange={(e) =>
-        //           setcategories({ ...categories, name: e.target.value })
-        //         }
-        //         type="text"
-        //         placeholder="enter category name like Lunch etc"
-        //       ></input>
 
-        //       <lable>is active / is avalible</lable>
+       {editcategories && (
+  <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
+    <div className="flex mx-auto w-[50%] flex-col">
 
-        //       <select
-        //         value={categories.is_active}
-        //         onChange={(e) =>
-        //           setcategories({ ...categories, is_active: e.target.value })
-        //         }
-        //       >
-        //         <option value={1}>true</option>
-        //         <option value={0}>false</option>
-        //       </select>
+      <button
+        onClick={() => seteditcategories(false)}
+        className="self-start mb-2 text-blue-600 underline"
+      >
+        back
+      </button>
 
-        //       <label>display_order</label>
-        //       <input
-        //         value={categories.display_order}
-        //         onChange={(e) =>
-        //           setcategories({
-        //             ...categories,
-        //             display_order: e.target.value,
-        //           })
-        //         }
-        //         type="number"
-        //         placeholder="enter unique number"
-        //       ></input>
+      <label>id</label>
+      <input
+        value={categories.id}
+        onChange={(e) =>
+          setcategories({ ...categories, id: e.target.value })
+        }
+        type="number"
+      />
 
-              {/* <lable>description</lable>
-        <input type="text" placeholder="enter category name like Lunch etc"></input> */}
+      <label>category name</label>
+      <input
+        value={categories.name}
+        onChange={(e) =>
+          setcategories({ ...categories, name: e.target.value })
+        }
+        type="text"
+      />
 
-            //   <button onClick={() => handlesubmit()}>submit</button>
-        //     </div>
-        //   </div>
-        )}
+      <label>is active / is available</label>
+      <select
+        value={categories.is_active}
+        onChange={(e) =>
+          setcategories({
+            ...categories,
+            is_active: Number(e.target.value),
+          })
+        }
+      >
+        <option value={1}>true</option>
+        <option value={0}>false</option>
+      </select>
+
+      <label>display order</label>
+      <input
+        value={categories.display_order}
+        onChange={(e) =>
+          setcategories({
+            ...categories,
+            display_order: e.target.value,
+          })
+        }
+        type="number"
+      />
+
+      <button
+        className="p-3 bg-blue-400 rounded-xl mt-4"
+        onClick={postedit}
+      >
+        submit
+      </button>
+    </div>
+  </div>
+)}
+
       </div>
     </div>
   );

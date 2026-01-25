@@ -54,7 +54,17 @@ router.post("/catogories", verifyToken,verifyAdmin,(req, res) =>{
 router.put('/catogories/:id',verifyToken,verifyAdmin, (req,res)=> {
     const id = req.params.id
 
-    const {name,display_order,is_active} = req.body
+    const {name,display_order,is_active,description} = req.body
+    console.log(name,display_order,is_active,description,id)
+
+
+    db.query("update categories set name = ?, display_order = ?, is_active = ?, description = ? where id = ? ",[name,display_order,is_active,description,id], (err,rlt) => {
+        if(err){
+            return res.json({msg: err})
+        }else{
+            return res.json({rlt: rlt})
+        }
+    })
 
 })
 
