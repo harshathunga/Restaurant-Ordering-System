@@ -6,6 +6,7 @@ import Menu from './Menu';
 import { AuthProvider } from './contex';
 import "./index.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Cart from './Cart';
 function App() {
  
 
@@ -15,6 +16,7 @@ function App() {
 
       <AuthProvider>
       <Menu/>
+      <Cart/>
 
       {/* <Listing></Listing> */}
       

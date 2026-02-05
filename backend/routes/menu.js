@@ -148,4 +148,48 @@ router.get("/menuitems", (req, res)=>{
     })
 })
 
+
+router.post("/place-order", verifyToken, (req, res) => {
+  const { cart, total_amount, address } = req.body;
+  const userId = req.user.id;
+
+  // 1️⃣ Create order
+  const orderQuery = `
+    INSERT INTO orders (user_id, order_number, status, total_amount, payment_status, delivery_address)
+    VALUES (?, ?, 'pending', ?, 'pending', ?)
+  `;
+
+  const orderNumber = `ORD-${Date.now()}`;
+
+  db.query(orderQuery, [userId, orderNumber, total_amount, address], (err, result) => {
+    if (err) return res.status(500).json(err);
+
+    const orderId = result.insertId;
+
+    // 2️⃣ Insert order items
+    const itemQuery = `
+      INSERT INTO order_items (order_id, menu_item_id, item_name, item_price, quantity)
+      VALUES ?
+    `;
+
+    const values = cart.map(item => [
+      orderId,
+      item.id,
+      item.name,
+      item.price,
+      item.qty
+    ]);
+
+    db.query(itemQuery, [values], (err2) => {
+      if (err2) return res.status(500).json(err2);
+
+      res.json({
+        message: "Order placed successfully",
+        order_number: orderNumber
+      });
+    });
+  });
+});
+
+
 export default router;

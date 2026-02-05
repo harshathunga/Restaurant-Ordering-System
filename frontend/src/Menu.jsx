@@ -3,9 +3,13 @@ import "./index.css";
 import "./App.css";
 
 import { AuthContext } from "./contex";
+import { CartContext } from "./Cart Contex";
 
 function Menu() {
   const { context_categories, setcontext_categories } = useContext(AuthContext);
+
+  const {addToCart} = useContext(CartContext)
+
   const [categories, setcategories] = useState([]);
 
   const [activ, setactiv] = useState("all");
@@ -84,7 +88,7 @@ function Menu() {
 
           <div className="flex justify-between gap-4">
             <span>cart</span>
-            <span>login</span>
+            <a href="/login"><span>login</span></a>
             <div className="">
               <button
                 className="font-medium text-l"
@@ -173,8 +177,9 @@ function Menu() {
               <div className="bg-white shadow rounded-lg overflow-hidden">
               <div className="h-32 bg-gradient-to-b from-orange-100 to-orange-50 flex items-center justify-center text-6xl">
                 <img
-                  className="h-32 w-auto"
-                  src={e.image_url}
+                  className=""
+                  src={e.image_url} width={150} alt="image" loading="lazy"
+
                 ></img>
               </div>
 
@@ -187,7 +192,7 @@ function Menu() {
 
                 <div className="flex justify-between items-center mt-4">
                   <span className="font-bold text-orange-600">${e.price}</span>
-                  <button onClick={()=> test(e)} className="bg-orange-500 text-white px-4 py-1 rounded-lg">
+                  <button onClick={()=> addToCart(e)} className="bg-orange-500 text-white px-4 py-1 rounded-lg">
                     + Add
                   </button>
                 </div>
