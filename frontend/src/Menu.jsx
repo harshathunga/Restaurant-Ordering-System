@@ -28,6 +28,8 @@ function Menu() {
 
   const role = user?.role;
 
+  console.log("this is the role:-", role)
+
   const menuitems = async () => {
     try {
       const res = await fetch("http://localhost:3002/menu/menuitems", {
@@ -83,48 +85,6 @@ function Menu() {
   return (
     <div>
       <div className="flex flex-col mx-6 my-4">
-        <nav className="flex justify-between">
-          <h1 className="text-xl font-medium ">company name</h1>
-
-          <div className="flex justify-between gap-4">
-            <span>cart</span>
-            <a href="/login"><span>login</span></a>
-            <div className="">
-              <button
-                className="font-medium text-l"
-                onClick={() => setOpen(!open)}
-              >
-                menu
-              </button>
-
-              {open && (
-                <div className="absolute mt-2">
-                  {/* <>JDJDJD</> */}
-                  {role === "ADMIN" && (
-                    <>
-                      <button>
-                        <a href="/listing">Manage Categories</a>
-                      </button>
-                      <li>Manage menu items</li>
-                    </>
-                  )}
-
-                  {role === "CUSTOMER" && (
-                    <>
-                      <li className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
-                        My Orders
-                      </li>
-                      <li className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
-                        Cart
-                      </li>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </nav>
-
         <div className="flex gap-3 my-4">
           {/* ALL BUTTON */}
           <button
