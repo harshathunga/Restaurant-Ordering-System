@@ -8,6 +8,8 @@ import "./index.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Cart from './Cart';
 import { useState } from 'react';
+
+import Menu_manage from './Menu_manage';
 function App() {
 
   const [open, setOpen] = useState(false);
@@ -44,7 +46,11 @@ function App() {
                       <button>
                         <a href="/listing">Manage Categories</a>
                       </button>
-                      <li>Manage menu items</li>
+
+                      <button>
+                        <a href="/menu-edit">Manage menu items</a>
+                      </button>
+                      <li></li>
                     </>
                   )}
 
@@ -87,10 +93,18 @@ function App() {
         <Routes>
           <Route path = '*' element= {<Menu></Menu>}></Route>
           <Route path = '/login' element= {<Login></Login>}></Route>
+          
           <Route path = '/listing' element= 
 
           <AdminRoute>
           <Listing></Listing>
+          </AdminRoute>
+          ></Route>
+
+          <Route path = '/menu-edit' element= 
+
+          <AdminRoute>
+          <Menu_manage></Menu_manage>
           </AdminRoute>
           ></Route>
           {/* <Route path='/cart' element={<Cart></Cart>}></Route> */}

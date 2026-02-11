@@ -121,6 +121,8 @@ router.get("/categories", (req, res)=> {
     } )
 })
 
+
+
 // this is to fetch menu based on the categories id
 router.get("/categories/:id",(req, res)=>{
     const id = req.params.id
@@ -148,7 +150,36 @@ router.get("/menuitems", (req, res)=>{
     })
 })
 
+//  this is to fetchmenu items 
+router.get("/menuitem", (req, res)=>{
+    db.query("select * from menu_items ", (err, rlt)=>{
+        if(err){
+            return res.json({err})
+        }else{
+            res.json({rlt})
+        }
+    })
+})
 
+router.post("/menuitems",verifyToken,verifyAdmin,(req, res) => {
+    const{name,price,image_url,is_avaliable, is_vegetarian, is_vegan,preparation_time, category_id} = req.body
+
+    console.log(name,price,image_url,is_avaliable, is_vegetarian, is_vegan,preparation_time, category_id, "dataof this post")
+
+    db.query("insert into menu_items(name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id) values (?,?,?,?,?,?,?,?)", [name,price,image_url,is_avaliable, is_vegetarian, is_vegan,preparation_time, category_id], (err, rlt)=>{
+        if (err){
+            return res.status(400).json({err: err})
+        }
+
+        else{
+            return res.status(200).json({msg: "data posted succesfully"})
+        }
+    })
+})
+
+
+
+// this nees work
 router.post("/place-order", verifyToken, (req, res) => {
   const { cart, total_amount, address } = req.body;
   const userId = req.user.id;

@@ -134,7 +134,7 @@ function Listing() {
       </div>
 
       {open && (
-        <div className="flex mx-auto w-[50%] flex-col align-middle ">
+        <div className="flex mx-auto w-[50%] flex-col align-middle justify-center ">
           <label>id</label>
           <input
             value={categories.id}
