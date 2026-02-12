@@ -1,8 +1,35 @@
 import React from 'react'
+import { useEffect } from 'react'
+import { useState } from 'react'
 
+export const edit_menuitems = async(id) =>{
+    
+}
 
+export const delete_menuitems = async (id) =>{
+    console.log(id)
+ 
+    try{
+        const res = await fetch(`http://localhost:3002/menu/menuitems/${id}`,{
+            method: 'delete',
+            credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // body: JSON.stringify(menudata)
+        })
+        const data = await res.json();
+        console.log(data)
+        
+        // return data
+    }catch (error) {
+      console.error("Failed to fetch menu:", error);
+    }
 
+}
 export const fetch_menuitems = async () =>{
+
+    
         try {
       const res = await fetch("http://localhost:3002/menu/menuitem", {
         method: "get",
@@ -12,7 +39,7 @@ export const fetch_menuitems = async () =>{
       });
 
       const data = await res.json();
-      
+    
       return data;
 
       
@@ -38,6 +65,7 @@ export const post_menuitems = async (menudata) =>{
       const data = await res.json();
       console.log(data)
       alert(data.msg)
+      loadMenu()
       return data;
       
     } catch (error) {
@@ -46,6 +74,7 @@ export const post_menuitems = async (menudata) =>{
 }
 
 function Menu_manage_api() {
+
 
 //     const menuitems = async () => {
 //     try {

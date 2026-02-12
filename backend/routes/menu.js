@@ -161,12 +161,24 @@ router.get("/menuitem", (req, res)=>{
     })
 })
 
+//  this is to fetchmenu items by id
+router.get("/menuitem/:id", (req, res)=>{
+    const id =  req.params.id
+    db.query("select * from menu_items where id = ?", [id], (err, rlt)=>{
+        if(err){
+            return res.json({err})
+        }else{
+            res.json({rlt:rlt})
+        }
+    })
+})
+
 router.post("/menuitems",verifyToken,verifyAdmin,(req, res) => {
-    const{name,price,image_url,is_avaliable, is_vegetarian, is_vegan,preparation_time, category_id} = req.body
+    const{name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id} = req.body
 
-    console.log(name,price,image_url,is_avaliable, is_vegetarian, is_vegan,preparation_time, category_id, "dataof this post")
+    console.log(name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id, "dataof this post")
 
-    db.query("insert into menu_items(name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id) values (?,?,?,?,?,?,?,?)", [name,price,image_url,is_avaliable, is_vegetarian, is_vegan,preparation_time, category_id], (err, rlt)=>{
+    db.query("insert into menu_items(name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id) values (?,?,?,?,?,?,?,?)", [name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id], (err, rlt)=>{
         if (err){
             return res.status(400).json({err: err})
         }
@@ -177,6 +189,20 @@ router.post("/menuitems",verifyToken,verifyAdmin,(req, res) => {
     })
 })
 
+router.delete("/menuitems/:id",verifyToken,verifyAdmin,(req, res) => {
+    const id =  req.params.id
+
+    console.log(id)
+
+    db.query("delete from menu_items where id = ?", [id],(err, rlt)=> {
+        if(err){
+            res.status(400).json({err: err})
+        }
+        else{
+            res.status(200).json({msg: "data has succsfully deleted"})
+        }
+    })
+})
 
 
 // this nees work

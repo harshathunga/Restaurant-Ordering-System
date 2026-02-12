@@ -1,22 +1,70 @@
 import React from "react";
-import { fetch_menuitems, post_menuitems } from "./Menu_manage_api";
+import {
+  fetch_menuitems,
+  post_menuitems,
+  delete_menuitems,
+} from "./Menu_manage_api";
 import { useState } from "react";
 import { useEffect } from "react";
+
 function Menu_manage() {
   const [items, setitems] = useState([]);
   const [open, setopen] = useState(false);
-  const [categories, setcategories] = useState([])
+  const [editopen, editsetopen] = useState(false);
+  const [categories, setcategories] = useState([]);
 
-  const [menudata, setmenudata] = useState({name: "",
+  const [menudata, setmenudata] = useState({
+    name: "",
     description: "",
     price: "",
     image_url: "",
     is_available: "",
     is_vegetarian: "1",
-    is_vegan:"1",
-    preparation_time:"",
-    category_id: ""
-  })
+    is_vegan: "1",
+    preparation_time: "",
+    category_id: "",
+  });
+
+
+
+  const [menu_data, setmenu_data] = useState([]);
+
+  const loadMenu = async () => {
+    const data = await fetch_menuitems();
+    setmenu_data(data);
+  };
+
+  const setedit = async(id) => {
+    
+    const res = await fetch(`http://localhost:3002/menu/menuitem/${id}`);
+
+    const data = await res.json();
+    // console.log(data, "data.menu")
+    const job = data.rlt[0];
+
+    setmenudata({
+    name: job.name,
+    description: job.description,
+    price: job.price,
+    image_url: job.image_url,
+    is_available: job.is_available,
+    is_vegetarian: job.is_vegetarian,
+    is_vegan: job.is_vegan,
+    preparation_time: job.preparation_time,
+    category_id: job.category_id,
+  });
+
+    console.log(id, job, "this is the setedit")
+    
+  }
+
+  const handledelete = (id) => {
+    delete_menuitems(id);
+    loadMenu();
+  };
+  useEffect(() => {
+    loadMenu();
+  }, []);
 
   const fetchCategories = async () => {
     try {
@@ -35,10 +83,8 @@ function Menu_manage() {
     }
   };
 
-
   useEffect(() => {
-
-    fetchCategories()
+    fetchCategories();
 
     fetch_menuitems().then((data) => {
       // console.log(data)
@@ -59,63 +105,121 @@ function Menu_manage() {
       {open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50   ">
           <div className="flex flex-col max-w-screen-sm align-middle justify-center mx-auto  bg-slate-50 space-y-3 max-h-[90vh] overflow-y-scroll snap-y py-7">
-
-            <span onClick={()=> setopen(!open)} className="cursor-pointer">X</span>
+            <span onClick={() => setopen(!open)} className="cursor-pointer">
+              X
+            </span>
             <label className="my-2">name</label>
-            <input value={menudata.name} onChange={(e)=> setmenudata({...menudata, name:e.target.value}) } type="text" placeholder="Item name"></input>
-
+            <input
+              value={menudata.name}
+              onChange={(e) =>
+                setmenudata({ ...menudata, name: e.target.value })
+              }
+              type="text"
+              placeholder="Item name"
+            ></input>
 
             <label className="my-2">description</label>
-            <input value={menudata.description} onChange={(e)=> setmenudata({...menudata, description:e.target.value})} type="text" placeholder="description"></input>
+            <input
+              value={menudata.description}
+              onChange={(e) =>
+                setmenudata({ ...menudata, description: e.target.value })
+              }
+              type="text"
+              placeholder="description"
+            ></input>
 
             <label className="my-2">price</label>
-            <input value={menudata.price} onChange={(e)=> setmenudata({...menudata, price:e.target.value})} className="text-black" type="number" placeholder="0.00"></input>
+            <input
+              value={menudata.price}
+              onChange={(e) =>
+                setmenudata({ ...menudata, price: e.target.value })
+              }
+              className="text-black"
+              type="number"
+              placeholder="0.00"
+            ></input>
 
-            <lable > image_url</lable>
-            <input value={menudata.image_url} onChange={(e)=> setmenudata({...menudata, image_url:e.target.value})} type="text" placeholder=" Paste image URL"></input>
+            <lable> image_url</lable>
+            <input
+              value={menudata.image_url}
+              onChange={(e) =>
+                setmenudata({ ...menudata, image_url: e.target.value })
+              }
+              type="text"
+              placeholder=" Paste image URL"
+            ></input>
 
             <label>category</label>
 
-             <select value={menudata.category_id} onChange={(e)=> setmenudata({...menudata, category_id: e.target.value})}>
-            {
-              categories.map((e)=>(
-               
-                  <option value={e.id}>{e.name}</option>
-                
-                
-              ))
-            }
+            <select
+              value={menudata.category_id}
+              onChange={(e) =>
+                setmenudata({ ...menudata, category_id: e.target.value })
+              }
+            >
+              {categories.map((e) => (
+                <option value={e.id}>{e.name}</option>
+              ))}
             </select>
 
             <label className="my-2">is_vegetarian</label>
-            <select  value={menudata.is_vegetarian} onChange={(e)=> setmenudata({...menudata, is_vegetarian:e.target.value})} >
-            <option value={1}>true</option>
-            <option value={0}>false</option>
-          </select>
+            <select
+              value={menudata.is_vegetarian}
+              onChange={(e) =>
+                setmenudata({ ...menudata, is_vegetarian: e.target.value })
+              }
+            >
+              <option value={1}>true</option>
+              <option value={0}>false</option>
+            </select>
 
-          <label className="my-2">is_available</label>
-            <select value={menudata.is_available} onChange={(e)=> setmenudata({...menudata, is_available:e.target.value})}>
+            <label className="my-2">is_available</label>
+            <select
+              value={menudata.is_available}
+              onChange={(e) =>
+                setmenudata({ ...menudata, is_available: e.target.value })
+              }
+            >
+              <option value="">Select category</option>
+              <option value={1}>true</option>
+              <option value={0}>false</option>
+            </select>
 
-            <option value="">Select category</option>
-            <option value={1}>true</option>
-            <option value={0}>false</option>
-          </select>
+            <label className="my-2">is_vegan</label>
+            <select
+              value={menudata.is_vegan}
+              onChange={(e) =>
+                setmenudata({ ...menudata, is_vegan: e.target.value })
+              }
+            >
+              <option value={1}>true</option>
+              <option value={0}>false</option>
+            </select>
 
-          <label className="my-2">is_vegan</label>
-            <select  value={menudata.is_vegan} onChange={(e)=> setmenudata({...menudata, is_vegan:e.target.value})}>
-            <option value={1}>true</option>
-            <option value={0}>false</option>
-          </select>
-
-          <label className="my-2">preparation time</label>
-            <input value={menudata.preparation_time} onChange={(e)=> setmenudata({...menudata, preparation_time:e.target.value})} className="text-black" type="number" placeholder="in minutes"></input>
+            <label className="my-2">preparation time</label>
+            <input
+              value={menudata.preparation_time}
+              onChange={(e) =>
+                setmenudata({ ...menudata, preparation_time: e.target.value })
+              }
+              className="text-black"
+              type="number"
+              placeholder="in minutes"
+            ></input>
           </div>
 
           <div className="">
-            <button className="bg-slate-400" onClick={()=> post_menuitems(menudata)}>submit</button>
+            <button
+              className="bg-slate-400"
+              onClick={() => post_menuitems(menudata)}
+            >
+              submit
+            </button>
           </div>
         </div>
       )}
+
+     
 
       {items.rlt?.map((e) => (
         <div className="  w-[350px] h-[200px] border border-solid border-black align-middle justify-center mx-auto">
@@ -138,8 +242,8 @@ function Menu_manage() {
           </div>
 
           <div>
-            <button className=" m-5 px-4 py-1">Edit</button>
-            <button>delete</button>
+            <button onClick={()=> {setedit(e.id)}} className="   m-5 px-4 py-1  hover:mb-3">Edit</button>
+            <button onClick={() => handledelete(e.id)}>delete</button>
           </div>
         </div>
       ))}
