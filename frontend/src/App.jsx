@@ -7,17 +7,25 @@ import { AuthProvider } from './contex';
 import "./index.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Cart from './Cart';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { FaShoppingCart } from "react-icons/fa";
 
 import Menu_manage from './Menu_manage';
+import { CartContext } from './Cart Contex';
 function App() {
 
+  const { cart } = useContext(CartContext);
   const [open, setOpen] = useState(false);
   const [cart_open, setcart_open] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+
+  console.log("cart length", cart.length)
+
+
   const role = user?.role; 
+  
 
   return (
     <div className=''>
@@ -27,7 +35,33 @@ function App() {
           <h1 className="text-xl font-medium ">company name</h1>
 
           <div className="flex justify-between gap-4">
-            <span onClick={()=> setcart_open(!cart_open)}>cart</span>
+            <div className="relative">
+    <span onClick={() => setcart_open(!cart_open)}>
+      <FaShoppingCart className="text-2xl" />
+    </span>
+
+    <span className="absolute -top-2 -right-2 
+                     bg-red-500 text-white 
+                     text-xs font-bold 
+                     w-5 h-5 
+                     flex items-center justify-center 
+                     rounded-full">
+      {/* 2 */}
+      {cart.length}
+    </span>
+  </div>
+            
+
+            {/* <span onClick={()=> setcart_open(!cart_open)}><FaShoppingCart /></span>
+            <span className="absolute -top-2 -right-2 
+                         bg-red-500 text-white 
+                         text-xs font-bold 
+                         w-5 h-5 
+                         flex items-center justify-center 
+                         rounded-full">
+          
+          2
+        </span> */}
             {/* <a href="#" onClick={()=> setcart_open(!cart_open)}><span>cart</span></a> */}
             <a href="/login"><span>login</span></a>
             <div className="">

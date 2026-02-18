@@ -128,6 +128,7 @@ router.post("/login", (req, res) => {
             message: "Login successful",
             // token: token,
             details: {
+              id: rlt[0].id,
               role: rlt[0].role,
               email: rlt[0].email,
               full_name: rlt[0].full_name,

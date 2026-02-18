@@ -4,17 +4,52 @@ import { CartContext } from "./Cart Contex";
 function Cart({ onClose }) {
   // console.log(close_cart, "this is the close cart")
 
-  const { cart, reduceQuantity,updatequantity, removeFromCart } = useContext(CartContext);
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const custmer_id = user?.id;
+
+  const { cart, reduceQuantity,updatequantity, removeFromCart, clearCart } = useContext(CartContext);
   let data = cart;
 
-  console.log(cart, "this is the cart")
-
-  const total_price = data.reduce(
+   const total_price = data.reduce(
     (sum, item) => sum + item.price * item.qty,
     0
   );
 
+  const [placeorderdata, setplaceorderdata] = useState({
+    cartdata : cart,
+    total_amount: total_price,
+    userid: custmer_id,
+  })
+
+  console.log(placeorderdata, "this is the placeorderdata")
+
+ 
+
   console.log("this is the total,  ", total_price);
+
+  const placeorder = async() => {
+    try {
+      const res = await fetch("http://localhost:3002/menu/place-order", {
+        method: "post",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(placeorderdata)
+      });
+
+      const data = await res.json();
+      console.log(data)
+      alert(data.msg)
+      clearCart()
+      loadMenu()
+      return data;
+      
+    } catch (error) {
+      console.error("Failed to fetch menu:", error);
+    }
+  }
 
   // const { context_categories, setcontext_categories } = useContext(AuthContext);
   return (
@@ -67,7 +102,7 @@ function Cart({ onClose }) {
             <p>Total:</p>
             <p>${total_price}</p>
         </div>
-        <button className="w-full p-2 rounded-md bg-orange-400">Place order</button>
+        <button onClick={()=> placeorder()} className="w-full p-2 rounded-md bg-orange-400">Place order</button>
       </footer>
 
       </div>

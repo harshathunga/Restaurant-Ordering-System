@@ -173,7 +173,24 @@ router.get("/menuitem/:id", (req, res)=>{
     })
 })
 
+router.put("/menuitem/:id", verifyToken,verifyAdmin,(req, res) => {
+    const id =  req.params.id
+    const{name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id} = req.body
+
+    console.log(id, name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id, "tis is the menu items of edit")
+
+    db.query("update menu_items set name = ?,price = ?,image_url = ?,is_available = ?, is_vegetarian = ?, is_vegan = ?,preparation_time = ?, category_id = ? where id = ?",[name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id,id], (err, rlt)=> {
+        if(err){
+            return res.status(400).json({msg: err})
+        }else{
+            return res.status(200).json({msg: "data has been updated "})
+        }
+    })
+} )
+
 router.post("/menuitems",verifyToken,verifyAdmin,(req, res) => {
+    
+
     const{name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id} = req.body
 
     console.log(name,price,image_url,is_available, is_vegetarian, is_vegan,preparation_time, category_id, "dataof this post")
@@ -207,8 +224,10 @@ router.delete("/menuitems/:id",verifyToken,verifyAdmin,(req, res) => {
 
 // this nees work
 router.post("/place-order", verifyToken, (req, res) => {
-  const { cart, total_amount, address } = req.body;
+  const { cartdata, total_amount, address } = req.body;
   const userId = req.user.id;
+
+  console.log( total_amount)
 
   // 1️⃣ Create order
   const orderQuery = `
@@ -217,6 +236,7 @@ router.post("/place-order", verifyToken, (req, res) => {
   `;
 
   const orderNumber = `ORD-${Date.now()}`;
+  console.log(orderNumber)
 
   db.query(orderQuery, [userId, orderNumber, total_amount, address], (err, result) => {
     if (err) return res.status(500).json(err);
@@ -229,7 +249,7 @@ router.post("/place-order", verifyToken, (req, res) => {
       VALUES ?
     `;
 
-    const values = cart.map(item => [
+    const values = cartdata.map(item => [
       orderId,
       item.id,
       item.name,
@@ -237,11 +257,13 @@ router.post("/place-order", verifyToken, (req, res) => {
       item.qty
     ]);
 
+    // console.log(values)
+
     db.query(itemQuery, [values], (err2) => {
       if (err2) return res.status(500).json(err2);
 
       res.json({
-        message: "Order placed successfully",
+        msg: "Order placed successfully",
         order_number: orderNumber
       });
     });

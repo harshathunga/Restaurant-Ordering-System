@@ -2,9 +2,31 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-export const edit_menuitems = async(id) =>{
-    
+export const edit_menuitems = async(editid, menudata) =>{
+
+  console.log(editid, menudata, "this is the test of efit_menu")
+
+    try {
+      const res = await fetch(`http://localhost:3002/menu/menuitem/${editid}`, {
+        method: "put",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(menudata)
+      });
+
+      const data = await res.json();
+      console.log(data)
+      alert(data.msg)
+      
+      return data;
+      
+    } catch (error) {
+      console.error("Failed to fetch menu:", error);
+    }
 }
+
 
 export const delete_menuitems = async (id) =>{
     console.log(id)
