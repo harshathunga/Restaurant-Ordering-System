@@ -36,7 +36,7 @@ router.post("/register", async (req, res) => {
   console.log(email, password, full_name, phone);
 
   if (!email || !password || !full_name || !phone) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ msg: "All fields are required" });
   }
 
   db.query("select * from users where email = ?", [email], (err, rlt) => {
@@ -69,6 +69,15 @@ router.post("/register", async (req, res) => {
   });
 });
 
+router.post("/logout", (req, res) =>{
+  res.clearCookie("token",{
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      })
+      res.status(200).json({msg: "Logged out successfully"})
+})
+
 
 
 router.post("/login", (req, res) => {
@@ -76,7 +85,7 @@ router.post("/login", (req, res) => {
   console.log(email, password);
 
   if(!email ||!password){
-    return res.json({message: "fill all the fields" })
+    return res.status(500).json({msg: "fill all the fields" })
     
   }
  
@@ -86,7 +95,7 @@ router.post("/login", (req, res) => {
     }
 
     if (rlt.length === 0) {
-      res.json("no user found please register");
+      res.status(500).json({msg:"no user found please register"});
     } else {
       console.log(rlt[0].password);
 
@@ -95,7 +104,7 @@ router.post("/login", (req, res) => {
       bcrypt.compare(password, rlt[0].password, (err, results) => {
         if (err) {
           console.log(err);
-          return res.status(500).json({ message: "Error checking password" });
+          return res.status(500).json({ msg: "Error checking password" });
         }
 
         if (results) {
@@ -124,8 +133,8 @@ router.post("/login", (req, res) => {
           //   maxAge: 60 * 60 * 1000, // 1 hour
           // });
 
-          res.json({
-            message: "Login successful",
+          res.status(200).json({
+            msg: "Login successful",
             // token: token,
             details: {
               id: rlt[0].id,
@@ -135,7 +144,7 @@ router.post("/login", (req, res) => {
             },
           });
         } else {
-          res.json({ message: "login failed" });
+          res.status(400).json({ msg: "login failed" });
         }
       });
     }

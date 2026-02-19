@@ -14,6 +14,7 @@ function Login() {
     // type: "success", // success | error
   });
 
+  console.log(alert.message, "jakaas")
   const [showPassword, setShowPassword] = useState(false);
 
   const login_submit = async () => {
@@ -31,7 +32,11 @@ function Login() {
 
       const data = await res.json();
 
-      console.log(data, "this is data of login");
+      setalert({
+        show:true,
+        message: data.msg
+      })
+      // console.log(data.msg, "this is data of login");
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -42,14 +47,17 @@ function Login() {
         })
       );
 
-
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        setalert({
+        show: true,
+        message: data.msg || "Login failed",
+      });
+        throw new Error(data.msg || "Login failed");
       }
 
       setalert({
         show: true,
-        message: data.message, // 👈 FROM BACKEND
+        message: data.msg // 👈 FROM BACKEND
         // type: res.ok ? "success" : "error",
       });
 
@@ -59,7 +67,11 @@ function Login() {
 
       console.log("Success:", data);
     } catch (error) {
-      console.error("Error:", error.message);
+      setalert({
+      show: true,
+      message: data,
+    });
+      console.log("Error:", error);
     }
   };
 
@@ -90,7 +102,7 @@ function Login() {
 
         <input
           value={login.email}
-          onChange={(e) => setlogin({ ...Login, email: e.target.value })}
+          onChange={(e) => setlogin({ ...login, email: e.target.value })}
           className="mb-6 px-3 py-2 rounded-md w-full outline-none border border-gray-300"
           type="email"
           placeholder="example@gmail.com"
@@ -123,7 +135,16 @@ function Login() {
         >
           login
         </button>
+
+        <div className="align-middle cursor-pointer justify-center m-auto">
+          <a href="/register" className="align-middle justify-center">register</a>
+        </div>
+
+        
       </div>
+
+
+      
     </div>
   );
 }
